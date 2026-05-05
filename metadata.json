@@ -1,0 +1,9 @@
+{
+  "name": "Search Light 50",
+  "description": "Una barra de búsqueda estilo Spotlight para GNOME 50",
+  "uuid": "searchbar@tiszui.asd",
+  "shell-version": [
+    "50"
+  ],
+  "url": ""
+}

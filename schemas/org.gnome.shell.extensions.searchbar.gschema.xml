@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.searchbar" path="/org/gnome/shell/extensions/searchbar/">
+    <key name="my-search-shortcut" type="as">
+      <default>['&lt;Control&gt;space']</default>
+      <summary>Abrir buscador</summary>
+      <description>Atajo para activar la barra de búsqueda.</description>
+    </key>
+  </schema>
+</schemalist>

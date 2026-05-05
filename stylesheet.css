@@ -1,0 +1,54 @@
+/* Contenedor principal */
+.search-container {
+  padding: 10px;
+}
+
+/* Caja de texto principal */
+.search-entry {
+  background-color: rgba(30, 30, 30, 0.95);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 12px 20px;
+  width: 500px;
+  font-size: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  caret-color: #3584e4;
+}
+
+.search-entry:focus {
+  border-color: #3584e4;
+}
+
+/* Contenedor de los resultados */
+.results-list {
+  background-color: rgba(40, 40, 40, 0.95);
+  border-radius: 0 0 12px 12px;
+  width: 500px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  padding: 5px;
+}
+
+/* Cada ítem de la lista (Botón) */
+.result-item {
+  padding: 8px 15px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.result-item:hover,
+.result-item:focus {
+  background-color: #3584e4;
+}
+
+/* Etiqueta de texto */
+.result-label {
+  font-size: 16px;
+  color: white;
+}
+
+.result-item:hover,
+.result-item:focus,
+.result-item.selected {
+  background-color: #3584e4;
+}
