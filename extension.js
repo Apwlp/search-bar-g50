@@ -46,7 +46,7 @@ export default class SearchLight50 extends Extension {
     });
 
     this._entry = new St.Entry({
-      hint_text: "Buscar aplicación...",
+      hint_text: "Search...",
       can_focus: true,
       style_class: "search-entry",
     });
