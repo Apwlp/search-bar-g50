@@ -1,9 +1,7 @@
-/* Contenedor principal */
 .search-container {
   padding: 10px;
 }
 
-/* Caja de texto principal */
 .search-entry {
   background-color: rgba(30, 30, 30, 0.95);
   color: white;
@@ -20,7 +18,6 @@
   border-color: #3584e4;
 }
 
-/* Contenedor de los resultados */
 .results-list {
   background-color: rgba(40, 40, 40, 0.95);
   border-radius: 0 0 12px 12px;
@@ -29,7 +26,6 @@
   padding: 5px;
 }
 
-/* Cada ítem de la lista (Botón) */
 .result-item {
   padding: 8px 15px;
   border-radius: 8px;
@@ -41,7 +37,6 @@
   background-color: #3584e4;
 }
 
-/* Etiqueta de texto */
 .result-label {
   font-size: 16px;
   color: white;

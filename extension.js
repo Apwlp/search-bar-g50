@@ -32,9 +32,10 @@ export default class SearchLight50 extends Extension {
   _showSearch() {
     const monitor = Main.layoutManager.primaryMonitor;
 
-    // ESTADO DE NAVEGACIÓN
     this._selectedIndex = -1;
     this._resultButtons = [];
+
+    this._signals = [];
 
     this._container = new St.BoxLayout({
       vertical: true,
@@ -42,7 +43,7 @@ export default class SearchLight50 extends Extension {
       x: monitor.x + monitor.width / 2 - 250,
       y: monitor.y + monitor.height / 3,
       clip_to_allocation: false,
-      reactive: true, // Necesario para detectar el scroll del mouse
+      reactive: true,
     });
 
     this._entry = new St.Entry({
@@ -57,39 +58,42 @@ export default class SearchLight50 extends Extension {
     });
     this._resultsBin.hide();
 
-    this._entry.clutter_text.connect("notify::text", () => {
+    let textSig = this._entry.clutter_text.connect("notify::text", () => {
       this._updateResults(this._entry.get_text());
     });
+    this._signals.push({ actor: this._entry.clutter_text, id: textSig });
 
-    // MANEJO DE TECLADO (FLECHAS, ESC, ENTER, TAB)
-    this._entry.clutter_text.connect("key-press-event", (actor, event) => {
-      let symbol = event.get_key_symbol();
+    let keySig = this._entry.clutter_text.connect(
+      "key-press-event",
+      (actor, event) => {
+        let symbol = event.get_key_symbol();
 
-      if (symbol === Clutter.KEY_Escape) {
-        this._destroySearch();
-        return Clutter.EVENT_STOP;
-      } else if (symbol === Clutter.KEY_Down) {
-        this._selectNext();
-        return Clutter.EVENT_STOP;
-      } else if (symbol === Clutter.KEY_Up) {
-        this._selectPrevious();
-        return Clutter.EVENT_STOP;
-      } else if (
-        symbol === Clutter.KEY_Return ||
-        symbol === Clutter.KEY_KP_Enter
-      ) {
-        this._executeSearch(this._entry.get_text());
-        return Clutter.EVENT_STOP;
-      } else if (symbol === Clutter.KEY_Tab || symbol === Clutter.KEY_Right) {
-        this._executeSearch(this._entry.get_text());
-        return Clutter.EVENT_STOP;
-      }
+        if (symbol === Clutter.KEY_Escape) {
+          this._destroySearch();
+          return Clutter.EVENT_STOP;
+        } else if (symbol === Clutter.KEY_Down) {
+          this._selectNext();
+          return Clutter.EVENT_STOP;
+        } else if (symbol === Clutter.KEY_Up) {
+          this._selectPrevious();
+          return Clutter.EVENT_STOP;
+        } else if (
+          symbol === Clutter.KEY_Return ||
+          symbol === Clutter.KEY_KP_Enter
+        ) {
+          this._executeSearch(this._entry.get_text());
+          return Clutter.EVENT_STOP;
+        } else if (symbol === Clutter.KEY_Tab || symbol === Clutter.KEY_Right) {
+          this._executeSearch(this._entry.get_text());
+          return Clutter.EVENT_STOP;
+        }
 
-      return Clutter.EVENT_PROPAGATE;
-    });
+        return Clutter.EVENT_PROPAGATE;
+      },
+    );
+    this._signals.push({ actor: this._entry.clutter_text, id: keySig });
 
-    // MANEJO DE SCROLL DEL RATÓN
-    this._container.connect("scroll-event", (actor, event) => {
+    let scrollSig = this._container.connect("scroll-event", (actor, event) => {
       let direction = event.get_scroll_direction();
       if (direction === Clutter.ScrollDirection.UP) {
         this._selectPrevious();
@@ -98,6 +102,7 @@ export default class SearchLight50 extends Extension {
       }
       return Clutter.EVENT_STOP;
     });
+    this._signals.push({ actor: this._container, id: scrollSig });
 
     this._container.add_child(this._entry);
     this._container.add_child(this._resultsBin);
@@ -106,11 +111,11 @@ export default class SearchLight50 extends Extension {
     this._entry.grab_key_focus();
   }
 
-  // --- LÓGICA DE NAVEGACIÓN ---
+  // --- Logic ---
   _selectNext() {
     if (this._resultButtons.length === 0) return;
     let newIndex = this._selectedIndex + 1;
-    if (newIndex >= this._resultButtons.length) newIndex = 0; // Vuelve al inicio
+    if (newIndex >= this._resultButtons.length) newIndex = 0;
     this._applySelection(newIndex);
   }
 
@@ -122,7 +127,6 @@ export default class SearchLight50 extends Extension {
   }
 
   _applySelection(index) {
-    // Quitamos la clase 'selected' del anterior
     if (
       this._selectedIndex >= 0 &&
       this._selectedIndex < this._resultButtons.length
@@ -134,7 +138,6 @@ export default class SearchLight50 extends Extension {
 
     this._selectedIndex = index;
 
-    // Ponemos la clase 'selected' al nuevo
     if (
       this._selectedIndex >= 0 &&
       this._selectedIndex < this._resultButtons.length
@@ -142,12 +145,11 @@ export default class SearchLight50 extends Extension {
       this._resultButtons[this._selectedIndex].add_style_class_name("selected");
     }
   }
-  // ----------------------------
 
   _updateResults(text) {
     this._resultsBin.destroy_all_children();
-    this._resultButtons = []; // Reiniciamos la lista de botones
-    this._selectedIndex = -1; // Reiniciamos el índice
+    this._resultButtons = [];
+    this._selectedIndex = -1;
 
     if (text.trim().length === 0) {
       this._resultsBin.hide();
@@ -218,7 +220,6 @@ export default class SearchLight50 extends Extension {
       button.set_child(box);
       button._appReference = app;
 
-      // Al pasar el ratón por encima, se selecciona automáticamente
       button.connect("enter-event", () => {
         this._applySelection(index);
         return Clutter.EVENT_PROPAGATE;
@@ -232,14 +233,12 @@ export default class SearchLight50 extends Extension {
       this._resultsBin.add_child(button);
     });
 
-    // Seleccionar automáticamente el primer resultado al buscar
     if (this._resultButtons.length > 0) {
       this._applySelection(0);
     }
   }
 
   _executeSearch(text) {
-    // Lanzamos la aplicación que esté actualmente seleccionada
     if (
       this._selectedIndex >= 0 &&
       this._selectedIndex < this._resultButtons.length
@@ -251,7 +250,6 @@ export default class SearchLight50 extends Extension {
       }
     }
 
-    // Fallback a web si no hay nada seleccionado o no hay apps
     if (text.trim().length > 0) {
       Gio.app_info_launch_default_for_uri(
         `https://www.google.com/search?q=${encodeURIComponent(text.trim())}`,
@@ -281,11 +279,39 @@ export default class SearchLight50 extends Extension {
   }
 
   _destroySearch() {
-    if (this._container) {
-      Main.layoutManager.removeChrome(this._container);
-      this._container.destroy();
-      this._container = null;
+    if (this._signals) {
+      for (let sig of this._signals) {
+        try {
+          if (sig.actor && sig.id) {
+            sig.actor.disconnect(sig.id);
+          }
+        } catch (e) {}
+      }
+      this._signals = null;
     }
+
+    if (this._container) {
+      try {
+        Main.layoutManager.removeChrome(this._container);
+      } catch (e) {}
+
+      try {
+        if (this._resultsBin) this._resultsBin.destroy();
+      } catch (e) {}
+      try {
+        if (this._entry) this._entry.destroy();
+      } catch (e) {}
+
+      try {
+        this._container.destroy();
+      } catch (e) {}
+    }
+
+    this._container = null;
+    this._entry = null;
+    this._resultsBin = null;
+    this._resultButtons = null;
+    this._selectedIndex = null;
   }
 
   disable() {
