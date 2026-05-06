@@ -147,6 +147,26 @@ export default class SearchLight50 extends Extension {
   }
 
   _updateResults(text) {
+    if (this._resultButtons) {
+      for (let btn of this._resultButtons) {
+        try {
+          btn.destroy();
+        } catch (e) {}
+      }
+    }
+
+    try {
+      this._resultsBin.destroy_all_children();
+    } catch (e) {}
+
+    this._resultButtons = [];
+    this._selectedIndex = -1;
+
+    if (text.trim().length === 0) {
+      this._resultsBin.hide();
+      return;
+    }
+
     this._resultsBin.destroy_all_children();
     this._resultButtons = [];
     this._selectedIndex = -1;
@@ -288,6 +308,14 @@ export default class SearchLight50 extends Extension {
         } catch (e) {}
       }
       this._signals = null;
+    }
+
+    if (this._resultButtons) {
+      for (let btn of this._resultButtons) {
+        try {
+          btn.destroy();
+        } catch (e) {}
+      }
     }
 
     if (this._container) {
