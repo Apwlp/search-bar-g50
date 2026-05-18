@@ -1,6 +1,6 @@
 {
   "name": "Search Light 50",
-  "description": "Una barra de búsqueda estilo Spotlight para GNOME 50",
+  "description": "A search bar for GNOME Shell 50, ctrl + space to open.",
   "uuid": "searchbar@tiszui.asd",
   "shell-version": [
     "50"
