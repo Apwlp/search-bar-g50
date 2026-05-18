@@ -24,12 +24,16 @@
   width: 500px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   padding: 5px;
+  display: flex;
+  flex-direction: column;
 }
 
 .result-item {
   padding: 8px 15px;
   border-radius: 8px;
-  transition: background 0.2s;
+  transition: background 0.2s ease;
+
+  text-align: left;
 }
 
 .result-item:hover,
@@ -40,6 +44,8 @@
 .result-label {
   font-size: 16px;
   color: white;
+
+  text-align: left;
 }
 
 .result-item:hover,
