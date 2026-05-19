@@ -104,6 +104,29 @@ export default class SearchLight50 extends Extension {
     });
     this._signals.push({ actor: this._container, id: scrollSig });
 
+    let focusSig = global.stage.connect('notify::key-focus', () => {
+      if (!this._container) return;
+
+      let currentFocus = global.stage.get_key_focus();
+
+      if (!currentFocus || currentFocus === global.stage) {
+        this._destroySearch();
+        return;
+      }
+
+      try {
+        if (!this._container.contains(currentFocus)) {
+          this._destroySearch();
+        }
+      } catch (error) {
+        this._destroySearch();
+      }
+
+    });
+
+    this._signals.push({ actor: global.stage, id: focusSig });
+
+
     this._container.add_child(this._entry);
     this._container.add_child(this._resultsBin);
 
